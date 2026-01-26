@@ -20,7 +20,6 @@ jobs:
           distribution: 'temurin'
 
       - name: Compile with maven
-        working-directory: ./payment-service-app
         run: mvn -B clean compile
 
       - name: Run tests
