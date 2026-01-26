@@ -15,7 +15,7 @@ public class PaymentController {
     //private final Payment payment = new Payment(1L, 0);
     private final Map<Long, Payment> payments = new HashMap<>();
     {
-        payments.put(1L, new Payment(1L, 1));
+        payments.put(1L, new Payment(1L, 1))
         payments.put(2L, new Payment(2L, 2));
         payments.put(3L, new Payment(3L, 3));
         payments.put(4L, new Payment(4L, 4));
