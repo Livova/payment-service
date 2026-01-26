@@ -8,6 +8,6 @@ public class PaymentServiceAppApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(PaymentServiceAppApplication.class, args);
-	}
+    }
 
 }
