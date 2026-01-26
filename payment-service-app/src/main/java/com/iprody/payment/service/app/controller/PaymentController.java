@@ -12,6 +12,7 @@ import java.util.ArrayList;
 @RestController
 @RequestMapping("/payments")
 public class PaymentController {
+        private final int ThisIsTestVar;
     //private final Payment payment = new Payment(1L, 0);
     private final Map<Long, Payment> payments = new HashMap<>();
     {
