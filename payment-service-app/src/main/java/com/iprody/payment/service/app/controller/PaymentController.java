@@ -13,7 +13,7 @@ import java.util.ArrayList;
 @RequestMapping("/payments")
 public class PaymentController {
     //private final Payment payment = new Payment(1L, 0);
-    private final Map<Long, Payment> payments=new HashMap<>();
+    private final Map<Long, Payment> payments = new HashMap<>();
     {
         payments.put(1L, new Payment(1L, 1));
         payments.put(2L, new Payment(2L, 2));
