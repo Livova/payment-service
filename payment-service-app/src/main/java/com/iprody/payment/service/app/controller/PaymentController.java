@@ -28,7 +28,7 @@ public class PaymentController {
     public Payment getPayment(@PathVariable Long id) {
         //System.out.println("size "+payments.size());
         //System.out.println("id "+id);
-        System.out.println("string "+payments.toString());
+        System.out.println("string " + payments.toString());
         return payments.get(id);
     }
 }
