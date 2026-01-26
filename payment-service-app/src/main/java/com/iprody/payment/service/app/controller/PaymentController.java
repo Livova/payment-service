@@ -12,9 +12,8 @@ import java.util.ArrayList;
 @RestController
 @RequestMapping("/payments")
 public class PaymentController {
-        private final int ThisIsTestVar;
     //private final Payment payment = new Payment(1L, 0);
-    private final Map<Long, Payment> payments = new HashMap<>();
+    private final Map<Long, Payment> payments=new HashMap<>();
     {
         payments.put(1L, new Payment(1L, 1));
         payments.put(2L, new Payment(2L, 2));
@@ -29,6 +28,7 @@ public class PaymentController {
     public Payment getPayment(@PathVariable Long id) {
         //System.out.println("size "+payments.size());
         //System.out.println("id "+id);
+        private final Payment payment = new Payment(1L, 0);
         System.out.println("string " + payments.toString());
         return payments.get(id);
     }
