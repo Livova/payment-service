@@ -11,4 +11,4 @@ public record PaymentFilter(
     Instant createdAfter,
     Instant createdBefore,
     String status
-) {}
+) { }

@@ -23,6 +23,6 @@ public interface PaymentRepository extends JpaRepository<Payment, UUID>, JpaSpec
                     FROM payments p
                     WHERE (p.currency = :currency OR :currency is null)
                       AND (p.amount >= :minAmount OR :minAmount is null)
-                    """)
+        """)
     List<Payment> filterNative(String currency, BigDecimal minAmount);
 }
