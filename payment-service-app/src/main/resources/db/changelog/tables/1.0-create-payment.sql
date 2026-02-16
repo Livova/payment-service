@@ -13,3 +13,5 @@ create table payment (
   created_at timestamp with time zone not null,
   updated_at timestamp with time zone not null
 );
+
+--rollback drop table payment
