@@ -22,3 +22,5 @@ insert into payment (
              '2025-01-01T12:00:00Z',
              '2025-01-01T12:00:00Z'
          );
+
+--rollback delete from payment
