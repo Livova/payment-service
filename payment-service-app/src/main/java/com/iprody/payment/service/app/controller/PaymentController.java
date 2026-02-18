@@ -1,6 +1,7 @@
 package com.iprody.payment.service.app.controller;
+import com.iprody.payment.service.app.dto.CreatePaymentDto;
+import com.iprody.payment.service.app.dto.PaymentDto;
 import com.iprody.payment.service.app.persistence.PaymentFilter;
-import com.iprody.payment.service.app.persistence.entity.*;
 import com.iprody.payment.service.app.service.PaymentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -19,12 +20,12 @@ public class PaymentController {
     private PaymentService paymentService;
 
     @GetMapping
-    public List<Payment> findAll() {
+    public List<PaymentDto> findAll() {
         return paymentService.findAll();
     }
 
     @GetMapping("/search")
-    public Page<Payment> search(
+    public Page<PaymentDto> search(
         @ModelAttribute PaymentFilter filter,
         @RequestParam(defaultValue = "0") int page,
         @RequestParam(defaultValue = "25") int size,
@@ -39,5 +40,10 @@ public class PaymentController {
 
         final Pageable pageRequest = PageRequest.of(page, size, sort);
         return paymentService.search(filter, pageRequest);
+    }
+
+    @PostMapping
+    public PaymentDto create(CreatePaymentDto paymentDto) {
+        return paymentService.create(paymentDto);
     }
 }
