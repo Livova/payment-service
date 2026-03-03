@@ -42,4 +42,31 @@ public class PaymentMapperTest {
         assertThat(dto.getCreatedAt()).isEqualTo(payment.getCreatedAt());
         assertThat(dto.getUpdatedAt()).isEqualTo(payment.getUpdatedAt());
     }
+
+    @Test
+    void shouldMapToEntity() {
+        // given
+        UUID guid = UUID.randomUUID();
+        PaymentDto paymentDto = new PaymentDto();
+        paymentDto.setGuid(guid);
+        paymentDto.setAmount(new BigDecimal("123.45"));
+        paymentDto.setCurrency("USD");
+        paymentDto.setInquiryRefId(UUID.randomUUID());
+        paymentDto.setStatus(PaymentStatus.APPROVED);
+        paymentDto.setCreatedAt(OffsetDateTime.now());
+        paymentDto.setUpdatedAt(OffsetDateTime.now());
+
+        // when
+        Payment entity = this.paymentMapper.toEntity(paymentDto);
+
+        // then
+        assertThat(entity).isNotNull();
+        assertThat(entity.getGuid()).isEqualTo(paymentDto.getGuid());
+        assertThat(entity.getAmount()).isEqualTo(paymentDto.getAmount());
+        assertThat(entity.getCurrency()).isEqualTo(paymentDto.getCurrency());
+        assertThat(entity.getInquiryRefId()).isEqualTo(paymentDto.getInquiryRefId());
+        assertThat(entity.getStatus()).isEqualTo(paymentDto.getStatus());
+        assertThat(entity.getCreatedAt()).isEqualTo(paymentDto.getCreatedAt());
+        assertThat(entity.getUpdatedAt()).isEqualTo(paymentDto.getUpdatedAt());
+    }
 }
