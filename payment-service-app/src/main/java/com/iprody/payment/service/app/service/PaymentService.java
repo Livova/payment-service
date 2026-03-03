@@ -12,6 +12,8 @@ import com.iprody.payment.service.app.persistence.PaymentFilterFactory;
 import com.iprody.payment.service.app.persistence.PaymentRepository;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @AllArgsConstructor
@@ -24,6 +26,11 @@ public class PaymentService {
         return this.paymentRepository.findAll().stream()
             .map(paymentMapper::toDto)
             .toList();
+    }
+
+    public Optional<PaymentDto> findById(UUID guid) {
+        return this.paymentRepository.findById(guid)
+                .map(paymentMapper::toDto);
     }
 
     public Page<PaymentDto> search(PaymentFilter filter, Pageable pageable) {
