@@ -26,21 +26,23 @@ public class PaymentMapperTest {
         payment.setCurrency("USD");
         payment.setInquiryRefId(UUID.randomUUID());
         payment.setStatus(PaymentStatus.APPROVED);
-        payment.setCreatedAt(OffsetDateTime.now());
-        payment.setUpdatedAt(OffsetDateTime.now());
+        payment.setCreatedAt(OffsetDateTime.parse("2026-01-01T00:00:00+01:00"));
+        payment.setUpdatedAt(OffsetDateTime.parse("2026-01-01T00:00:00+01:00"));
 
         // when
         PaymentDto dto = this.paymentMapper.toDto(payment);
 
         // then
         assertThat(dto).isNotNull();
-        assertThat(dto.getGuid()).isEqualTo(payment.getGuid());
-        assertThat(dto.getAmount()).isEqualTo(payment.getAmount());
-        assertThat(dto.getCurrency()).isEqualTo(payment.getCurrency());
-        assertThat(dto.getInquiryRefId()).isEqualTo(payment.getInquiryRefId());
-        assertThat(dto.getStatus()).isEqualTo(payment.getStatus());
-        assertThat(dto.getCreatedAt()).isEqualTo(payment.getCreatedAt());
-        assertThat(dto.getUpdatedAt()).isEqualTo(payment.getUpdatedAt());
+        assertThat(dto)
+                .returns(payment.getGuid(), PaymentDto::getGuid)
+                .returns(payment.getAmount(), PaymentDto::getAmount)
+                .returns(payment.getCurrency(), PaymentDto::getCurrency)
+                .returns(payment.getInquiryRefId(), PaymentDto::getInquiryRefId)
+                .returns(payment.getStatus(), PaymentDto::getStatus)
+                .returns(payment.getCreatedAt(), PaymentDto::getCreatedAt)
+                .returns(payment.getUpdatedAt(), PaymentDto::getUpdatedAt);
+
     }
 
     @Test
@@ -53,8 +55,8 @@ public class PaymentMapperTest {
         paymentDto.setCurrency("USD");
         paymentDto.setInquiryRefId(UUID.randomUUID());
         paymentDto.setStatus(PaymentStatus.APPROVED);
-        paymentDto.setCreatedAt(OffsetDateTime.now());
-        paymentDto.setUpdatedAt(OffsetDateTime.now());
+        paymentDto.setCreatedAt(OffsetDateTime.parse("2026-01-01T00:00:00+01:00"));
+        paymentDto.setUpdatedAt(OffsetDateTime.parse("2026-01-01T00:00:00+01:00"));
 
         // when
         Payment entity = this.paymentMapper.toEntity(paymentDto);

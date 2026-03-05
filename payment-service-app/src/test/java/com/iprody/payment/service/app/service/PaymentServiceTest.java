@@ -1,7 +1,7 @@
 package com.iprody.payment.service.app.service;
 
+import com.iprody.payment.service.app.dto.CreatePaymentDto;
 import com.iprody.payment.service.app.persistence.PaymentFilter;
-import com.iprody.payment.service.app.persistence.PaymentFilterFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -9,8 +9,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.ArgumentMatchers;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
@@ -33,7 +31,6 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 
@@ -66,8 +63,8 @@ public class PaymentServiceTest {
         payment.setAmount(new BigDecimal("100.00"));
         payment.setCurrency("USD");
         payment.setStatus(PaymentStatus.APPROVED);
-        payment.setCreatedAt(OffsetDateTime.now());
-        payment.setUpdatedAt(OffsetDateTime.now());
+        payment.setCreatedAt(OffsetDateTime.parse("2026-01-01T00:00:00+01:00"));
+        payment.setUpdatedAt(OffsetDateTime.parse("2026-01-01T00:00:00+01:00"));
 
         paymentDto = new PaymentDto();
         paymentDto.setGuid(payment.getGuid());
@@ -92,9 +89,93 @@ public class PaymentServiceTest {
         assertEquals(guid, result.getGuid());
         assertEquals("USD", result.getCurrency());
         assertEquals(PaymentStatus.APPROVED, result.getStatus());
-
+        assertEquals(new BigDecimal("100.00"), result.getAmount());
         verify(paymentRepository).findById(guid);
         verify(paymentMapper).toDto(payment);
+    }
+
+    @Test
+    void shouldGetById() {
+        // given
+        when(paymentRepository.findById(guid)).thenReturn(Optional.of(payment));
+        when(paymentMapper.toDto(payment)).thenReturn(paymentDto);
+
+        // when
+        PaymentDto result = paymentService.get(guid);
+
+        // then
+        assertEquals(guid, result.getGuid());
+        assertEquals("USD", result.getCurrency());
+        assertEquals(PaymentStatus.APPROVED, result.getStatus());
+        assertEquals(new BigDecimal("100.00"), result.getAmount());
+        verify(paymentRepository).findById(guid);
+        verify(paymentMapper).toDto(payment);
+    }
+
+    @Test
+    void shouldCreate() {
+        // given
+        CreatePaymentDto createPaymentDto = new CreatePaymentDto(paymentDto.getGuid(),
+                paymentDto.getAmount(),
+                paymentDto.getCurrency(),
+                paymentDto.getTransactionRefId(),
+                paymentDto.getStatus(),
+                paymentDto.getNote());
+        when(paymentMapper.fromCreateDto(createPaymentDto)).thenReturn(payment);
+        when(paymentRepository.save(payment)).thenReturn(payment);
+        when(paymentMapper.toDto(payment)).thenReturn(paymentDto);
+
+        // when
+        PaymentDto result = paymentService.create(createPaymentDto);
+
+        // then
+        assertEquals(guid, result.getGuid());
+        assertEquals("USD", result.getCurrency());
+        assertEquals(PaymentStatus.APPROVED, result.getStatus());
+        assertEquals(new BigDecimal("100.00"), result.getAmount());
+        verify(paymentMapper).fromCreateDto(createPaymentDto);
+        verify(paymentMapper).toDto(payment);
+    }
+
+    @Test
+    void shouldUpdate() {
+        // given
+        when(paymentRepository.save(payment)).thenReturn(payment);
+        when(paymentMapper.toEntity(paymentDto)).thenReturn(payment);
+        when(paymentMapper.toDto(payment)).thenReturn(paymentDto);
+        when(paymentRepository.existsById(guid)).thenReturn(Boolean.TRUE);
+
+        // when
+        PaymentDto result = paymentService.update(guid, paymentDto);
+
+        // then
+        assertEquals(guid, result.getGuid());
+        assertEquals("USD", result.getCurrency());
+        assertEquals(PaymentStatus.APPROVED, result.getStatus());
+        assertEquals(new BigDecimal("100.00"), result.getAmount());
+        verify(paymentMapper).toDto(payment);
+    }
+
+    @Test
+    void shouldUpdateStatus() {
+        // given
+
+        // when
+        paymentService.updateStatus(guid, paymentDto.getStatus());
+
+        // then
+        verify(paymentRepository).updateStatus(guid, paymentDto.getStatus());
+    }
+
+    @Test
+    void shouldUpdateNote() {
+        // given
+
+        // when
+        paymentService.updateNote(guid, paymentDto.getNote());
+
+        // then
+        verify(paymentRepository).updateNote(guid, paymentDto.getNote());
     }
 
     @ParameterizedTest
@@ -132,10 +213,10 @@ public class PaymentServiceTest {
         List<Payment> paymentFiltred = paymentList.stream()
                 .filter(n -> (filter.currency()==null ? n.getCurrency() : filter.currency()).equals(n.getCurrency()))
                 .filter(n -> (filter.status()==null ? n.getStatus() : filter.status()).equals(n.getStatus()))
-                .filter(n -> (filter.minAmount()==null ? n.getAmount() : filter.minAmount()).compareTo(n.getAmount()) >= 0)
-                .filter(n -> (filter.maxAmount()==null ? n.getAmount() : filter.maxAmount()).compareTo(n.getAmount()) <= 0)
-                .filter(n -> (filter.createdAfter()==null ? n.getCreatedAt().toInstant() : filter.createdAfter()).compareTo(n.getCreatedAt().toInstant()) >= 0)
-                .filter(n -> (filter.createdBefore()==null ? n.getCreatedAt().toInstant() : filter.createdBefore()).compareTo(n.getCreatedAt().toInstant()) <= 0)
+                .filter(n -> (filter.minAmount()==null ? n.getAmount() : filter.minAmount()).compareTo(n.getAmount()) <= 0)
+                .filter(n -> (filter.maxAmount()==null ? n.getAmount() : filter.maxAmount()).compareTo(n.getAmount()) >= 0)
+                .filter(n -> (filter.createdAfter()==null ? n.getCreatedAt().toInstant() : filter.createdAfter()).compareTo(n.getCreatedAt().toInstant()) <= 0)
+                .filter(n -> (filter.createdBefore()==null ? n.getCreatedAt().toInstant() : filter.createdBefore()).compareTo(n.getCreatedAt().toInstant()) >= 0)
                 .toList();
         when(paymentRepository.findAll(any(Specification.class), any(Pageable.class)))
                 .thenReturn(new PageImpl<>(paymentFiltred));
@@ -188,7 +269,6 @@ public class PaymentServiceTest {
 
     static List<PaymentFilter> filtersProvider() {
         List<PaymentFilter> filters = new ArrayList<>();
-        Instant now = Instant.now();
 
         // 1. Только валюта
         filters.add(new PaymentFilter("USD", null, null, null, null, null));
