@@ -1,10 +1,7 @@
 package com.iprody.payment.service.app.persistence;
 import com.iprody.payment.service.app.persistence.entity.Payment;
 import com.iprody.payment.service.app.persistence.entity.PaymentStatus;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-import org.springframework.data.jpa.repository.NativeQuery;
-import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.*;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -25,4 +22,12 @@ public interface PaymentRepository extends JpaRepository<Payment, UUID>, JpaSpec
                       AND (p.amount >= :minAmount OR :minAmount is null)
         """)
     List<Payment> filterNative(String currency, BigDecimal minAmount);
+
+    @Modifying
+    @Query("UPDATE Payment p set p.status = :status where p.guid = :guid")
+    void updateStatus(UUID guid, PaymentStatus status);
+
+    @Modifying
+    @Query("UPDATE Payment p set p.note = :note where p.guid = :guid")
+    void updateNote(UUID guid, String note);
 }
