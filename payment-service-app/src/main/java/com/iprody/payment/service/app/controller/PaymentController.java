@@ -1,4 +1,6 @@
 package com.iprody.payment.service.app.controller;
+import com.iprody.payment.service.app.controller.errorhandle.ErrorMessageDto;
+import com.iprody.payment.service.app.controller.errorhandle.NotFoundException;
 import com.iprody.payment.service.app.dto.CreatePaymentDto;
 import com.iprody.payment.service.app.dto.PaymentDto;
 import com.iprody.payment.service.app.dto.UpdatePaymentNoteDto;
@@ -80,4 +82,14 @@ public class PaymentController {
     public PaymentDto update(@PathVariable("id") UUID id, @RequestBody PaymentDto paymentDto) {
         return paymentService.update(id, paymentDto);
     }
+
+    /*@ExceptionHandler(NotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorMessageDto handleNotFound(NotFoundException ex) {
+        if (ex.getId() != null) {
+            System.out.println("OLOLO");
+            return new ErrorMessageDto(ex.getId(), ex.getOperation(), ex.getMessage());
+        }
+        return new ErrorMessageDto(ex.getOperation(), ex.getMessage());
+    }*/
 }

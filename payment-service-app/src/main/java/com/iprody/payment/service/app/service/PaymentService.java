@@ -1,11 +1,11 @@
 package com.iprody.payment.service.app.service;
 
+import com.iprody.payment.service.app.controller.errorhandle.NotFoundException;
 import com.iprody.payment.service.app.dto.CreatePaymentDto;
 import com.iprody.payment.service.app.dto.PaymentDto;
 import com.iprody.payment.service.app.mapper.PaymentMapper;
 import com.iprody.payment.service.app.persistence.entity.Payment;
 import com.iprody.payment.service.app.persistence.entity.PaymentStatus;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -41,7 +41,7 @@ public class PaymentService {
     public PaymentDto get(UUID id) {
         return paymentRepository.findById(id)
                 .map(paymentMapper::toDto)
-                .orElseThrow(() -> new IllegalArgumentException("Платеж не найден: " + id));
+                .orElseThrow(() -> new NotFoundException(id, NotFoundException.operationType.GET_OP, "Платеж не найден: " + id));
     }
 
     public Page<PaymentDto> search(PaymentFilter filter, Pageable pageable) {
@@ -62,14 +62,14 @@ public class PaymentService {
 
     public void delete(UUID id) {
         if (!paymentRepository.existsById(id)) {
-            throw new EntityNotFoundException("Платеж не найден: " + id);
+            throw new NotFoundException(id, NotFoundException.operationType.DELETE_OP, "Платеж не найден: " + id);
         }
         this.paymentRepository.deleteById(id);
     }
 
     public PaymentDto update(UUID id, PaymentDto dto) {
         if (!paymentRepository.existsById(id)) {
-            throw new EntityNotFoundException("Платеж не найден: " + id);
+            throw new NotFoundException(id, NotFoundException.operationType.UPDATE_OP, "Платеж не найден: " + id);
         }
         final Payment updated = paymentMapper.toEntity(dto);
         updated.setGuid(id);
