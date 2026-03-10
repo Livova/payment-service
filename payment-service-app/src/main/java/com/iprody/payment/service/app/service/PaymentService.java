@@ -41,7 +41,9 @@ public class PaymentService {
     public PaymentDto get(UUID id) {
         return paymentRepository.findById(id)
                 .map(paymentMapper::toDto)
-                .orElseThrow(() -> new NotFoundException(id, NotFoundException.operationType.GET_OP, "Платеж не найден: " + id));
+                .orElseThrow(() -> new NotFoundException(id,
+                        NotFoundException.operationType.GET_OP,
+                        "Платеж не найден: " + id));
     }
 
     public Page<PaymentDto> search(PaymentFilter filter, Pageable pageable) {
