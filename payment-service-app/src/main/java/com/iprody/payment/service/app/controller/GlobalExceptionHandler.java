@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(NotFoundException.class)
+
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorMessageDto handleNotFound(NotFoundException ex) {
         return new ErrorMessageDto(
@@ -21,7 +22,6 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-
     public ErrorMessageDto handleOther(Exception ex) {
         return new ErrorMessageDto(
                 null,
