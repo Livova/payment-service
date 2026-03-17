@@ -5,13 +5,13 @@ import lombok.*;
 import java.time.Instant;
 import java.util.UUID;
 
-@Getter
-@RequiredArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
+@Getter
 @Setter
-public class ErrorMessageDto {
+public class ErrorMessageDtoResponse {
     private UUID id;
     private NotFoundException.operationType operation;
-    @NonNull private final String errorMessage;
-    private final Instant timestamp = Instant.now();
+    private String errorMessage;
+    private Instant timestamp;
 }

@@ -103,7 +103,7 @@ public class PaymentController {
     @PutMapping
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasRole('admin')")
-    public PaymentDto update(@PathVariable("id") UUID id, @RequestBody PaymentDto paymentDto) {
-        return paymentService.update(id, paymentDto);
+    public PaymentDto update(@RequestBody PaymentDto paymentDto) {
+        return paymentService.update(paymentDto.getGuid(), paymentDto);
     }
 }

@@ -76,6 +76,8 @@ public class PaymentService {
             throw new NotFoundException(id, NotFoundException.operationType.UPDATE_OP, "Платеж не найден: " + id);
         }
         final Payment updated = paymentMapper.toEntity(dto);
+        final OffsetDateTime time = OffsetDateTime.now(clock);
+        updated.setUpdatedAt(time);
         updated.setGuid(id);
         final Payment saved = paymentRepository.save(updated);
         return paymentMapper.toDto(saved);
