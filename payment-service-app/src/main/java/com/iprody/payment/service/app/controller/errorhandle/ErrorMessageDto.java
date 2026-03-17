@@ -13,7 +13,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class ErrorMessageDto {
     private UUID id;
-    @NonNull private final NotFoundException.operationType operation;
+    private NotFoundException.operationType operation;
     @NonNull private final String errorMessage;
     private final Instant timestamp = Instant.now();
 }

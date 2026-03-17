@@ -11,6 +11,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -27,7 +29,12 @@ public class PaymentController {
         return paymentService.findAll();
     }
 
+    /**
+     * Поиск платежей по фильтру и постранично.
+     * Доступ разрешён admin и reader.
+     */
     @GetMapping("/search")
+    @PreAuthorize("hasAnyRole('admin', 'reader')")
     public Page<PaymentDto> search(
         @ModelAttribute PaymentFilter filter,
         @RequestParam(defaultValue = "0") int page,
@@ -45,39 +52,58 @@ public class PaymentController {
         return paymentService.search(filter, pageRequest);
     }
 
+    /**
+     * Получение одного платежа по UUID.
+     * Доступ разрешён admin и reader.
+     */
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('admin', 'reader')")
     @ResponseStatus(HttpStatus.OK)
     public PaymentDto get(@PathVariable UUID id) {
         return paymentService.get(id);
     }
 
+    @GetMapping("/debug")
+    public Object debug(Authentication auth) {
+        return auth.getAuthorities();
+    }
+
+    /**
+     * Создание нового платежа.
+     * Доступ разрешён только пользователям с ролью admin.
+     */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public PaymentDto create(@RequestBody CreatePaymentDto paymentDto) {
+    @PreAuthorize("hasRole('admin')")
+    public PaymentDto create(@RequestBody CreatePaymentDto paymentDto)  {
         return paymentService.create(paymentDto);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasRole('admin')")
     public void delete (@PathVariable UUID id) {
         paymentService.delete(id);
     }
 
     @PatchMapping("/{id}/status")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('admin')")
     public void updateStatus(@PathVariable("id") UUID id, @RequestBody UpdatePaymentStatusDto dto) {
         paymentService.updateStatus(id, dto.getStatus());
     }
 
     @PatchMapping("/{id}/note")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasRole('admin')")
     public void updateNote(@PathVariable("id") UUID id, @RequestBody UpdatePaymentNoteDto dto) {
         paymentService.updateNote(id, dto.getNote());
     }
 
     @PutMapping
     @ResponseStatus(HttpStatus.OK)
-    public PaymentDto update(@PathVariable("id") UUID id, @RequestBody PaymentDto paymentDto) {
-        return paymentService.update(id, paymentDto);
+    @PreAuthorize("hasRole('admin')")
+    public PaymentDto update(@RequestBody PaymentDto paymentDto) {
+        return paymentService.update(paymentDto.getGuid(), paymentDto);
     }
 }
