@@ -15,6 +15,7 @@ import com.iprody.payment.service.app.persistence.PaymentFilter;
 import com.iprody.payment.service.app.persistence.PaymentFilterFactory;
 import com.iprody.payment.service.app.persistence.PaymentRepository;
 
+import java.time.Clock;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -26,6 +27,7 @@ public class PaymentService {
 
     private final PaymentRepository paymentRepository;
     private final PaymentMapper paymentMapper;
+    private final Clock clock;
 
     public List<PaymentDto> findAll() {
         return this.paymentRepository.findAll().stream()
@@ -53,7 +55,7 @@ public class PaymentService {
 
     public PaymentDto create(CreatePaymentDto paymentDto) {
         final Payment payment = paymentMapper.fromCreateDto(paymentDto);
-        final OffsetDateTime time = OffsetDateTime.now();
+        final OffsetDateTime time = OffsetDateTime.now(clock);
         payment.setCreatedAt(time);
         payment.setUpdatedAt(time);
         payment.setGuid(UUID.randomUUID());

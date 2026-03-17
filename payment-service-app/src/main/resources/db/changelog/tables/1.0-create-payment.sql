@@ -9,7 +9,7 @@ create table payment (
   currency varchar(3) not null,
   transaction_ref_id uuid,
   status varchar(255) not null,
-  note varchar(255) not null,
+  note varchar(255) null,
   created_at timestamp with time zone not null,
   updated_at timestamp with time zone not null
 );
