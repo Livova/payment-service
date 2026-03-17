@@ -31,7 +31,7 @@ public class GlobalExceptionHandler {
         return new ErrorMessageDto(
                 null,
                 null,
-                ex.getMessage()
+                msg
         );
     }
 
