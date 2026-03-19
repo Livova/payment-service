@@ -5,6 +5,7 @@ import com.iprody.payment.service.app.dto.UpdatePaymentNoteDto;
 import com.iprody.payment.service.app.dto.UpdatePaymentStatusDto;
 import com.iprody.payment.service.app.persistence.PaymentFilter;
 import com.iprody.payment.service.app.service.PaymentService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
+@Slf4j
 @RestController
 @RequestMapping("/payments")
 public class PaymentController {
@@ -60,6 +62,7 @@ public class PaymentController {
     @PreAuthorize("hasAnyRole('admin', 'reader')")
     @ResponseStatus(HttpStatus.OK)
     public PaymentDto get(@PathVariable UUID id) {
+        log.info("getting payment with id {}", id);
         return paymentService.get(id);
     }
 
