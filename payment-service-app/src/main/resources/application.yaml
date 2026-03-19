@@ -33,3 +33,4 @@ logging:
     liquibase: DEBUG
     org.springframework.boot.autoconfigure.liquibase: DEBUG
     org.springframework.sequrity: DEBUG
+    com.iprody.payment-service-app: DEBUG
