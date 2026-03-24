@@ -25,7 +25,7 @@ public class SecurityConfig {
             sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         // настраиваем security-фильтры
             .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/payments/**").authenticated()
+            //.requestMatchers("/payments/**").authenticated()
             .anyRequest().permitAll()
         )
             .oauth2ResourceServer(oauth2 -> oauth2

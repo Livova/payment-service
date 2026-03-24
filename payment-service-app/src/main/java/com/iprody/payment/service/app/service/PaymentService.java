@@ -4,6 +4,7 @@ import com.iprody.payment.service.app.controller.errorhandle.NotFoundException;
 import com.iprody.payment.service.app.dto.CreatePaymentDto;
 import com.iprody.payment.service.app.dto.PaymentDto;
 import com.iprody.payment.service.app.mapper.PaymentMapper;
+import com.iprody.payment.service.app.mapper.XPaymentAdapterMapper;
 import com.iprody.payment.service.app.persistence.entity.Payment;
 import com.iprody.payment.service.app.persistence.entity.PaymentStatus;
 import jakarta.transaction.Transactional;
@@ -14,6 +15,8 @@ import org.springframework.stereotype.Service;
 import com.iprody.payment.service.app.persistence.PaymentFilter;
 import com.iprody.payment.service.app.persistence.PaymentFilterFactory;
 import com.iprody.payment.service.app.persistence.PaymentRepository;
+import com.iprody.payment.service.app.async.AsyncSender;
+import com.iprody.payment.service.app.async.XPaymentAdapterRequestMessage;
 
 import java.time.Clock;
 import java.time.OffsetDateTime;
@@ -28,6 +31,10 @@ public class PaymentService {
     private final PaymentRepository paymentRepository;
     private final PaymentMapper paymentMapper;
     private final Clock clock;
+
+    private final XPaymentAdapterMapper xPaymentAdapterMapper;
+
+    private final AsyncSender<XPaymentAdapterRequestMessage> asyncSender;
 
     public List<PaymentDto> findAll() {
         return this.paymentRepository.findAll().stream()
@@ -59,9 +66,13 @@ public class PaymentService {
         payment.setCreatedAt(time);
         payment.setUpdatedAt(time);
         payment.setGuid(UUID.randomUUID());
-        return this.paymentMapper.toDto(
-                this.paymentRepository.save(payment)
+        final PaymentDto savedDto = this.paymentMapper.toDto(
+            this.paymentRepository.save(payment)
         );
+
+        asyncSender.send(xPaymentAdapterMapper.toXPaymentAdapterRequestMessage(savedDto));
+
+        return savedDto;
     }
 
     public void delete(UUID id) {
