@@ -87,7 +87,7 @@ public class PaymentController {
      */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasRole('admin')")
+    //@PreAuthorize("hasRole('admin')")
     public PaymentDto create(@RequestBody CreatePaymentDto paymentDto)  {
         log.info("Create payment with data {}", paymentDto);
         final PaymentDto result = paymentService.create(paymentDto);
