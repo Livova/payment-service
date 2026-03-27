@@ -5,6 +5,7 @@ import com.iprody.payment.service.app.dto.UpdatePaymentNoteDto;
 import com.iprody.payment.service.app.dto.UpdatePaymentStatusDto;
 import com.iprody.payment.service.app.persistence.PaymentFilter;
 import com.iprody.payment.service.app.service.PaymentService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
+@Slf4j
 @RestController
 @RequestMapping("/payments")
 public class PaymentController {
@@ -42,6 +44,7 @@ public class PaymentController {
         @RequestParam(defaultValue = "guid") String sortBy,
         @RequestParam(defaultValue = "desc") String direction
     ) {
+        log.info("Search payments with filter={}", filter);
         final Sort sort = switch (direction) {
             case "asc" -> Sort.by(sortBy).ascending();
             case "desc" -> Sort.by(sortBy).descending();
@@ -49,7 +52,14 @@ public class PaymentController {
         };
 
         final Pageable pageRequest = PageRequest.of(page, size, sort);
-        return paymentService.search(filter, pageRequest);
+        final Page<PaymentDto> result = paymentService.search(filter, pageRequest);
+
+        log.debug("Search payments result: page={}, size={}, totalElements={}, totalPages={}",
+            result.getNumber(),
+            result.getSize(),
+            result.getTotalElements(),
+            result.getTotalPages());
+        return result;
     }
 
     /**
@@ -60,7 +70,10 @@ public class PaymentController {
     @PreAuthorize("hasAnyRole('admin', 'reader')")
     @ResponseStatus(HttpStatus.OK)
     public PaymentDto get(@PathVariable UUID id) {
-        return paymentService.get(id);
+        log.info("Get payment with id {}", id);
+        final PaymentDto result = paymentService.get(id);
+        log.debug("Get payment result: id={}, state={}", result.getGuid(), result);
+        return result;
     }
 
     @GetMapping("/debug")
@@ -76,13 +89,17 @@ public class PaymentController {
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('admin')")
     public PaymentDto create(@RequestBody CreatePaymentDto paymentDto)  {
-        return paymentService.create(paymentDto);
+        log.info("Create payment with data {}", paymentDto);
+        final PaymentDto result = paymentService.create(paymentDto);
+        log.debug("Create payment result: id={}, state={}", result.getGuid(), result);
+        return result;
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasRole('admin')")
     public void delete (@PathVariable UUID id) {
+        log.info("Delete payment with id {}", id);
         paymentService.delete(id);
     }
 
@@ -90,6 +107,7 @@ public class PaymentController {
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasRole('admin')")
     public void updateStatus(@PathVariable("id") UUID id, @RequestBody UpdatePaymentStatusDto dto) {
+        log.info("Update payment status with id {} and status {}", id, dto.getStatus());
         paymentService.updateStatus(id, dto.getStatus());
     }
 
@@ -97,6 +115,7 @@ public class PaymentController {
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasRole('admin')")
     public void updateNote(@PathVariable("id") UUID id, @RequestBody UpdatePaymentNoteDto dto) {
+        log.info("Update payment status with id {} and note {}", id, dto.getNote());
         paymentService.updateNote(id, dto.getNote());
     }
 
@@ -104,6 +123,9 @@ public class PaymentController {
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasRole('admin')")
     public PaymentDto update(@RequestBody PaymentDto paymentDto) {
-        return paymentService.update(paymentDto.getGuid(), paymentDto);
+        log.info("Update payment with id {} and data {}", paymentDto.getGuid(), paymentDto);
+        final PaymentDto result = paymentService.update(paymentDto.getGuid(), paymentDto);
+        log.debug("Update payment result: id={}, state={}", result.getGuid(), result);
+        return result;
     }
 }
