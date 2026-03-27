@@ -21,8 +21,10 @@ import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.math.BigDecimal;
+import java.time.Clock;
 import java.time.Instant;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -46,6 +48,9 @@ public class PaymentServiceTest {
 
     @InjectMocks
     private PaymentService paymentService;
+
+    @Mock
+    private Clock clock;
 
     private Payment payment;
     private PaymentDto paymentDto;
@@ -115,6 +120,8 @@ public class PaymentServiceTest {
     @Test
     void shouldCreate() {
         // given
+        when(clock.instant()).thenReturn(Instant.parse("2026-03-17T12:00:00Z"));
+        when(clock.getZone()).thenReturn(ZoneOffset.UTC);
         CreatePaymentDto createPaymentDto = new CreatePaymentDto(paymentDto.getGuid(),
                 paymentDto.getAmount(),
                 paymentDto.getCurrency(),
@@ -140,6 +147,8 @@ public class PaymentServiceTest {
     @Test
     void shouldUpdate() {
         // given
+        when(clock.instant()).thenReturn(Instant.parse("2026-03-17T12:00:00Z"));
+        when(clock.getZone()).thenReturn(ZoneOffset.UTC);
         when(paymentRepository.save(payment)).thenReturn(payment);
         when(paymentMapper.toEntity(paymentDto)).thenReturn(payment);
         when(paymentMapper.toDto(payment)).thenReturn(paymentDto);

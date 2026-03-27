@@ -27,11 +27,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AccessDeniedException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ErrorMessageDto handleAccessDenied(AccessDeniedException ex) {
-        final String msg = ex.getMessage() != null ? ex.getMessage() : "Отсутствуют права на выполнение операции";
         return new ErrorMessageDto(
                 null,
                 null,
-                msg
+                "Отсутствуют права на выполнение операции"
         );
     }
 
