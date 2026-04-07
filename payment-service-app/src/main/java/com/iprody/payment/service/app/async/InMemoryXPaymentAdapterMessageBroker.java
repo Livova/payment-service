@@ -2,7 +2,7 @@ package com.iprody.payment.service.app.async;
 
 import jakarta.annotation.PreDestroy;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+//import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -11,7 +11,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-@Service
+//@Service
 class InMemoryXPaymentAdapterMessageBroker
     implements AsyncSender<XPaymentAdapterRequestMessage> {
 
