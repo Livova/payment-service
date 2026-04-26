@@ -22,10 +22,12 @@ public class XPaymentAdapterMessageHandler implements MessageHandler<XPaymentAda
     public void handle(XPaymentAdapterResponseMessage message) {
         log.info("Received message {} ", message);
         log.info("Received message with id {} and status {}", message.getMessageGuid(), message.getStatus());
-        if (message.getStatus() == XPaymentAdapterStatus.SUCCEEDED) {
-            paymentService.updateStatus(message.getPaymentGuid(), PaymentStatus.APPROVED);
-        } else if (message.getStatus() == XPaymentAdapterStatus.CANCELED) {
-            paymentService.updateStatus(message.getPaymentGuid(), PaymentStatus.DECLINED);
-        }
+        PaymentStatus newStatus = switch (message.getStatus()) {
+            case SUCCEEDED -> PaymentStatus.APPROVED;
+            case PROCESSING -> PaymentStatus.PENDING;
+            case CANCELED -> PaymentStatus.DECLINED;
+        };
+
+        paymentService.updateStatus(message.getPaymentGuid(), newStatus);
     }
 }
