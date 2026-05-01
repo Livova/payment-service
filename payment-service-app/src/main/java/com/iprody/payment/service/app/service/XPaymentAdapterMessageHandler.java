@@ -1,6 +1,5 @@
 package com.iprody.payment.service.app.service;
 
-import com.iprody.payment.service.app.async.XPaymentAdapterStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -22,7 +21,7 @@ public class XPaymentAdapterMessageHandler implements MessageHandler<XPaymentAda
     public void handle(XPaymentAdapterResponseMessage message) {
         log.info("Received message {} ", message);
         log.info("Received message with id {} and status {}", message.getMessageGuid(), message.getStatus());
-        PaymentStatus newStatus = switch (message.getStatus()) {
+        final PaymentStatus newStatus = switch (message.getStatus()) {
             case SUCCEEDED -> PaymentStatus.APPROVED;
             case PROCESSING -> PaymentStatus.PENDING;
             case CANCELED -> PaymentStatus.DECLINED;
