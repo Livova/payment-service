@@ -16,13 +16,13 @@ spec:
     spec:
       containers:
         - name: payment-service-app
-          image: payment-service-app:latest # докер образ
+          image: payment-service-app:2 # докер образ
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080 # порт внутри Pod’а
           env: # переменные окружения
             - name: SERVER_PORT
-            - value: "8080"
+              value: "8080"
             - name: SPRING_DATASOURCE_URL
               value: jdbc:postgresql://my-pg-postgresql.db.svc.cluster.local:5432/payment-db
             - name: SPRING_DATASOURCE_USERNAME
@@ -33,6 +33,8 @@ spec:
               value: kafka.kafka.svc.cluster.local:9092
             - name: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI
               value: http://keycloak.keycloak.svc.cluster.local:8080/realms/iprody-lms
+            - name: MANAGEMENT_TRACING_EXPORT_ZIPKIN_ENDPOINT
+              value: "http://zipkin.observability.svc.cluster.local:9411/api/v2/spans"
 ---
 apiVersion: v1
 kind: Service
