@@ -27,6 +27,16 @@ spring:
     listener:
       ack-mode: manual
       concurrency: 1
+      observation-enabled: true # ДОБАВИТЬ
+
+    template:
+      observation-enabled: true # ДОБАВИТЬ
+
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: admin
+    password: admin
 
 app:
   kafka:
@@ -42,3 +52,19 @@ app:
       username: paymentAgentIprody
       password: iprodyTestPassword0123
       account: paymentAgentIprodyApiToken
+
+  rabbitmq:
+    delayed-exchange-name: payment-state-check-exchange
+    queue-name: payment-state-check-queue
+    max-retries: 3
+    interval-ms: 10000
+
+management:
+  tracing:
+    sampling:
+      probability: 1.0         # 100% для отладки; в продакшн должен быть меньше
+    propagation:
+      type: w3c,b3             # чтобы понимать и traceparent, и b3
+  zipkin:
+    tracing:
+      endpoint: http://zipkin:9411/api/v2/spans

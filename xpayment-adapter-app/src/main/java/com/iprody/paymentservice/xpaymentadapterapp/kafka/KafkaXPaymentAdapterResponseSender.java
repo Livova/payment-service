@@ -34,13 +34,14 @@ public class KafkaXPaymentAdapterResponseSender
                 msg.getPaymentGuid(), msg.getAmount(), msg.getCurrency(), topic);
         var future = template.send(topic, key, msg);
         try {
-            SendResult<String, XPaymentAdapterResponseMessage> result = future.get();
-            if (result != null && result.getRecordMetadata() != null) {
-                log.info("Message sent to topic {} partition {} offset {}",
-                        result.getRecordMetadata().topic(), result.getRecordMetadata().partition(), result.getRecordMetadata().offset());
-            } else {
-                log.info("Message sent to topic {} (no metadata)", topic);
-            }
+            future.whenComplete((result, ex) -> {
+                if (ex != null) {
+                    log.error("Failed to send message to topic {}: {}", topic, ex.getMessage(), ex);
+                } else {
+                    log.info("Message sent to topic {} partition {} offset {}",
+                                result.getRecordMetadata().topic(), result.getRecordMetadata().partition(), result.getRecordMetadata().offset());
+                }
+            });
         } catch (Exception ex) {
             log.error("Failed to send message to topic {}: {}", topic, ex.getMessage(), ex);
         }

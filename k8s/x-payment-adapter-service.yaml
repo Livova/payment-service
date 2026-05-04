@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: x-payment-adapter-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: x-payment-adapter-app
+  template:
+    metadata:
+      labels:
+        app: x-payment-adapter-app
+    spec:
+      containers:
+        - name: x-payment-adapter-app
+          image: xpayment-adapter-app:2
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
+              value: "kafka.kafka.svc.cluster.local:9092"
+            - name: SPRING_RABBITMQ_HOST
+              value: "my-rabbit-rabbitmq.rabbit.svc.cluster.local"
+            - name: MANAGEMENT_TRACING_EXPORT_ZIPKIN_ENDPOINT
+              value: "http://zipkin.observability.svc.cluster.local:9411/api/v2/spans"
